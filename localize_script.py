@@ -43,7 +43,7 @@ def main():
     
     duplicate_dict = duplicate_check(keys, keys_name)
     FE_processor(keys.get("FE Localization Keys"), fileVersion, duplicate_dict.get("FE Localization Keys"))
-    
+    BE_processor(keys.get('BE Status Codes'),fileVersion, duplicate_dict.get('BE Status Codes'))
     
 def duplicate_check(keys,keys_name):
     
@@ -54,7 +54,7 @@ def duplicate_check(keys,keys_name):
     for sheet_name, column_name in keys_name.items():        
         sheet = keys.get(sheet_name)
         
-        #Create isDuplucated column
+        #Create isDuplicated column
         isDuplicated = pd.DataFrame(data = sheet.duplicated([column_name],keep=False),columns=['isDuplicated'])
         
         duplicate_dict[sheet_name] = isDuplicated
@@ -81,14 +81,34 @@ def duplicate_check(keys,keys_name):
             break
     return duplicate_dict
 
-def BE_processor(keys):
+def BE_processor(keys, fileVersion, isDuplicated):
+    
+    #remove whitespace
     column_list = list(range(6))
     for i in column_list:
         keys.iloc[:,i] = keys.iloc[:,i].str.strip()
         
-    #Create isDuplucated check column
-    isDuplicated = pd.DataFrame(data = keys.duplicated(['Status Code'],keep=False),columns=['isDuplicated'])
-        
+    #Remove duplicated rows
+    keys = keys[isDuplicated.values == False]
+    
+    #Rename first 6 columns
+    new_columns = keys.columns.values
+    new_columns[1:6] = ['description','titleEn','titleTh','messageEn','messageTh']
+    keys.columns  = new_columns
+    
+    keys = keys[keys.iloc[:,0].astype(str).str.isnumeric()]
+    
+    #Change first column to be index
+    keys.set_index(str(keys.columns.values[0]), inplace=True, drop=True)
+    
+    keys = keys.loc[:,['description','titleEn','titleTh','messageEn','messageTh']]
+
+    data = keys.to_dict('index')
+    
+    file_name = 'beStatusCodes-' + str(datetime.now().strftime("%Y%m%d")) + "_" + str(datetime.now().strftime("%H%M")) +"_v" + fileVersion
+    
+    #Wrtie JSON file
+    json_writer(data, file_name)
         
 def FE_processor(keys, fileVersion, isDuplicated):
     #remove whitespace
@@ -121,14 +141,14 @@ def FE_processor(keys, fileVersion, isDuplicated):
     }
     
     #Gen file name
-    file_name = 'language_pack_' + str(datetime.now().strftime("%Y%m%d")) + "_1700_v" + str(fileVersion) + ".json"
+    file_name = 'language_pack_' + str(datetime.now().strftime("%Y%m%d")) + "_" + str(datetime.now().strftime("%H%M")) + "_v" + str(fileVersion)
     
     #Wrtie JSON file
     json_writer(data, file_name)
     
 
 def json_writer(data,file_name):
-    with open(file_name, 'w', encoding='utf-8') as f:
+    with open(file_name + ".json", 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
     
 if __name__ == '__main__':
