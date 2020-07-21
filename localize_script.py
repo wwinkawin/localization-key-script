@@ -4,7 +4,7 @@ from datetime import datetime
 import os.path
 from os import path
 import xlsxwriter
-import GUI
+import processor
 
 # def main():
 #     while True:
@@ -85,22 +85,22 @@ import GUI
 # def BE_processor(keys, fileVersion, isDuplicated):
     
 #     #remove whitespace
-#     column_list = list(range(6))
+#     column_list = list(range(1,6))
 #     for i in column_list:
 #         keys.iloc[:,i] = keys.iloc[:,i].str.strip()
         
 #     #Remove duplicated rows
 #     keys = keys[isDuplicated.values == False]
-    
-#     #Rename first 6 columns
-#     new_columns = keys.columns.values
-#     new_columns[1:6] = ['description','titleEn','titleTh','messageEn','messageTh']
-#     keys.columns  = new_columns
-    
+#     #Check if status code is numeric
 #     keys = keys[keys.iloc[:,0].astype(str).str.isnumeric()]
     
 #     #Change first column to be index
 #     keys.set_index(str(keys.columns.values[0]), inplace=True, drop=True)
+    
+#     #Rename first 6 columns
+#     new_columns = keys.columns.values
+#     new_columns[0:5] = ['description','titleEn','titleTh','messageEn','messageTh']
+#     keys.columns  = new_columns
     
 #     keys = keys.loc[:,['description','titleEn','titleTh','messageEn','messageTh']]
 
@@ -150,10 +150,10 @@ import GUI
 
 # def json_writer(data,file_name):
 #     with open(file_name + ".json", 'w', encoding='utf-8') as f:
-#         json.dump(data, f, ensure_ascii=False, indent=4)
+        json.dump(data, f, ensure_ascii=False, indent=4)
     
 if __name__ == '__main__':
-    window = GUI.tk.Tk()
-    GUI.MainApplication(window)
-    window.mainloop()
-    #main()
+    # window = GUI.tk.Tk()
+    # GUI.MainApplication(window)
+    # window.mainloop()
+    main()

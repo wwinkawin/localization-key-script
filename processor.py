@@ -21,32 +21,11 @@ class ExcelProcessor:
         'BE Status Codes': 'Status Code'}
     sheet_name = ['FE Localization Keys','BE Status Codes']
    
-    def __init__(self):
-        pass
-        
-       
-        
-    
-        # while True:
-        #     self.file_version = input("Version: ")
-        #     if self.file_version.isnumeric():
-        #         break
-        #     else:
-        #         print ("Plase enter a version number")
+    def __init__(self, file_path, file_version):
+        self.file_path = file_path
+        self.file_version = file_version
         
     
-        
-            
-        
-        
-        # duplicate_dict = self.duplicate_check(keys, keys_name)
-        # self.FE_processor(keys.get("FE Localization Keys"), self.file_version, duplicate_dict.get("FE Localization Keys"))
-        # self.BE_processor(keys.get('BE Status Codes'),self.file_version, duplicate_dict.get('BE Status Codes'))
-    
-    def set_attr(self,file_path, file_version):
-       self.file_path = file_path
-       self.file_version = file_version
-       print(file_path)
     
     def read_excel(self):
         while True:
@@ -102,7 +81,7 @@ class ExcelProcessor:
         keys = self.keys
         
         #remove whitespace
-        column_list = list(range(6))
+        column_list = list(range(1,6))
         for i in column_list:
             keys.iloc[:,i] = keys.iloc[:,i].str.strip()
             
